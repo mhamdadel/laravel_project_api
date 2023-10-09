@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -55,22 +56,34 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product updated successfully']);
     }
-
+    public function removeImage($file_name)
+    {
+        if(Storage::exists($file_name)){
+            Storage::delete($file_name);
+            return true;
+        } else {
+            return false;
+        }
+    }
     public function updateProduct(Request $request, Product $product)
     {
 
         if (Gate::denies('update', $product)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        
+
         $request->validate([
             'name' => 'max:255',
             'image' => 'image|max:2048',
             'description' => 'max:65200',
         ]);
 
-        $imagePath =  $request->file('image')->store('images/products'); 
-        
+        $imagePath =  $request->file('image')->store('images/products');
+
+        if($request->input('image') !== "") {
+            $this->removeImage($product->image);
+        }
+
         $product->name = $request->input('image') ?? $product->description;
         $product->image = $request->input('image') ?? $product->image;
         $product->image = $imagePath ?? $product->image;
