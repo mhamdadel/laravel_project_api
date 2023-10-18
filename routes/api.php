@@ -26,7 +26,7 @@ Route::middleware('web')->get('/token', function () {
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
-], function ($router) {
+], function () {
     Route::post('register/with_email', [AuthController::class, 'register_with_email']);
     Route::post('register/with_phone', [AuthController::class, 'register_with_phone']);
     Route::post('login', [AuthController::class, 'login']);

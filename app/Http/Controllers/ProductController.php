@@ -78,9 +78,8 @@ class ProductController extends Controller
             'description' => 'max:65200',
         ]);
 
-        $imagePath =  $request->file('image')->store('images/products');
-
-        if($request->input('image') !== "") {
+        if($request->input('image') !== "" && !is_null($request->input('image'))) {
+            $imagePath =  $request->file('image')->store('images/products');
             $this->removeImage($product->image);
         }
 
